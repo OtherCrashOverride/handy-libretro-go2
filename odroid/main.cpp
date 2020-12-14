@@ -206,6 +206,9 @@ int main (int argc, char **argv)
 
 
     display = go2_display_create();
+    int dw = go2_display_height_get(display);
+    int dh = go2_display_width_get(display);
+
     presenter = go2_presenter_create(display, DRM_FORMAT_RGB565, 0xff080808);
 
     go2_surface_t* fbsurface = go2_surface_create(display, HANDY_SCREEN_WIDTH * 3, HANDY_SCREEN_HEIGHT * 3, DRM_FORMAT_RGB565);
@@ -246,7 +249,9 @@ int main (int argc, char **argv)
 
     //Stopwatch_Reset();
     //Stopwatch_Start();
-
+    int sw = dh * ((float)HANDY_SCREEN_WIDTH / (float)HANDY_SCREEN_HEIGHT);
+    if (sw > dw) sw = dw;
+    
     isRunning = true;
     while(isRunning)
     {
@@ -284,7 +289,7 @@ int main (int argc, char **argv)
         const int srcStride = HANDY_SCREEN_WIDTH;
 
         uint16_t* dst = (uint16_t*)go2_surface_map(fbsurface);
-        const int dstStride = HANDY_SCREEN_WIDTH * 3;
+        const int dstStride = HANDY_SCREEN_WIDTH * 3;       
 
         for (int y = 0; y < HANDY_SCREEN_HEIGHT; ++y)
         {
@@ -313,7 +318,8 @@ int main (int argc, char **argv)
         go2_presenter_post( presenter,
                             fbsurface,
                             0, 0, HANDY_SCREEN_WIDTH * 3, HANDY_SCREEN_HEIGHT * 3,
-                            (320 / 2) - (HANDY_SCREEN_HEIGHT * 3 / 2), 0, HANDY_SCREEN_HEIGHT * 3, HANDY_SCREEN_WIDTH * 3,
+                            //(320 / 2) - (HANDY_SCREEN_HEIGHT * 3 / 2), 0, HANDY_SCREEN_HEIGHT * 3, HANDY_SCREEN_WIDTH * 3,
+                            0, (dw / 2) - (sw / 2), dh, sw,
                             GO2_ROTATION_DEGREES_270);
         ++totalFrames;
 
